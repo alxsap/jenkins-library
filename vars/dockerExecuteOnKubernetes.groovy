@@ -354,6 +354,8 @@ private void test_printWorkspaceFilesystem() {
       pwd
       ls -la
       ls -la .pipeline/
+      ls -la .pipeline/stepReports || true
+      ls -la .pipeline/reports || true
     '''
 }
 
