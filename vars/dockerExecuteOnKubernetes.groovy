@@ -303,6 +303,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
      * In case third case, we need to create the 'container' stash to bring the modified content back to the host.
      */
     try {
+        echo "[dockerExecuteOnKubernetes] executeOnPod config: ${config}"
         SidecarUtils sidecarUtils = new SidecarUtils(script)
         def stashContent = config.stashContent
         if (config.containerName && stashContent.isEmpty()) {
