@@ -307,6 +307,8 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
         SidecarUtils sidecarUtils = new SidecarUtils(script)
         def stashContent = config.stashContent
         if (config.containerName && stashContent.isEmpty()) {
+            echo "DEBUG: Workspace Filesystem OUTSIDE Container before stashing"
+            test_printWorkspaceFilesystem()
             stashContent = [stashWorkspace(config, 'workspace')]
         }
         podTemplate(getOptions(config)) {
@@ -327,11 +329,13 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
                             echo "invalidate stash workspace-${config.uniqueId}"
                             stash name: "workspace-${config.uniqueId}", excludes: '**/*', allowEmpty: true
 
-                            echo "DEBUG: Workspace Filesystem INSIDE Container"
+                            echo "DEBUG: Workspace Filesystem INSIDE Container after unstashing"
                             test_printWorkspaceFilesystem()
 
                             body()
                         } finally {
+                            echo "DEBUG: Workspace Filesystem INSIDE Container before stashing"
+                            test_printWorkspaceFilesystem()
                             stashWorkspace(config, 'container', true, true)
                         }
                     }
@@ -343,8 +347,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
     } finally {
         if (config.containerName)
             unstashWorkspace(config, 'container')
-
-            echo "DEBUG: Workspace Filesystem OUTSIDE Container"
+            echo "DEBUG: Workspace Filesystem OUTSIDE Container after unstashing"
             test_printWorkspaceFilesystem()
     }
 }
