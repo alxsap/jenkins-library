@@ -322,7 +322,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
                     container(containerParams) {
                         try {
                             utils.unstashAll(stashContent)
-                            echo "XXX invalidate stash workspace-${config.uniqueId}"
+                            echo "invalidate stash workspace-${config.uniqueId}"
                             stash name: "workspace-${config.uniqueId}", excludes: '**/*', allowEmpty: true
 
                             echo "DEBUG: Workspace Filesystem INSIDE Container"
@@ -412,6 +412,7 @@ chown -R ${runAsUser}:${fsGroup} ."""
             echo "stash effective (excludes): ${excludes}"
         }
 
+        echo "dockerExecuteOnKubernetes.stashWorkspace ${prefix}-${config.uniqueId}"
         stash(
             name: stashName,
             includes: includes,
@@ -451,6 +452,7 @@ private Map getSecurityContext(Map config) {
 
 private void unstashWorkspace(config, prefix) {
     try {
+        echo "dockerExecuteOnKubernetes.unstashWorkspace ${prefix}-${config.uniqueId}"
         unstash "${prefix}-${config.uniqueId}"
     } catch (AbortException | IOException e) {
         echo "${e.getMessage()}\n${e.getCause()}"
@@ -458,7 +460,7 @@ private void unstashWorkspace(config, prefix) {
         echo "Unstash workspace failed with throwable ${e.getMessage()}"
         throw e
     } finally {
-        echo "YYY invalidate stash ${prefix}-${config.uniqueId}"
+        echo "invalidate stash ${prefix}-${config.uniqueId}"
         stash name: "${prefix}-${config.uniqueId}", excludes: '**/*', allowEmpty: true
     }
 }
