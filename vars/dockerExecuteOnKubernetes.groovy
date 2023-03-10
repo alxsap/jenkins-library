@@ -322,8 +322,12 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
                     container(containerParams) {
                         try {
                             utils.unstashAll(stashContent)
-                            echo "invalidate stash workspace-${config.uniqueId}"
+                            echo "XXX invalidate stash workspace-${config.uniqueId}"
                             stash name: "workspace-${config.uniqueId}", excludes: '**/*', allowEmpty: true
+
+                            echo "DEBUG: Workspace Filesystem INSIDE Container"
+                            test_printWorkspaceFilesystem()
+
                             body()
                         } finally {
                             stashWorkspace(config, 'container', true, true)
@@ -337,7 +341,18 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
     } finally {
         if (config.containerName)
             unstashWorkspace(config, 'container')
+
+            echo "DEBUG: Workspace Filesystem OUTSIDE Container"
+            test_printWorkspaceFilesystem()
     }
+}
+
+private void test_printWorkspaceFilesystem() {
+    sh '''
+      pwd
+      ls -la
+      ls -la .pipeline/
+    '''
 }
 
 private String generatePodSpec(Map config) {
@@ -443,7 +458,7 @@ private void unstashWorkspace(config, prefix) {
         echo "Unstash workspace failed with throwable ${e.getMessage()}"
         throw e
     } finally {
-        echo "invalidate stash ${prefix}-${config.uniqueId}"
+        echo "YYY invalidate stash ${prefix}-${config.uniqueId}"
         stash name: "${prefix}-${config.uniqueId}", excludes: '**/*', allowEmpty: true
     }
 }
