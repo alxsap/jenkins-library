@@ -306,9 +306,9 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
         echo "[dockerExecuteOnKubernetes] executeOnPod config: ${config}"
         SidecarUtils sidecarUtils = new SidecarUtils(script)
         def stashContent = config.stashContent
+        echo "DEBUG: Workspace Filesystem OUTSIDE Container before creating it"
+        test_printWorkspaceFilesystem()
         if (config.containerName && stashContent.isEmpty()) {
-            echo "DEBUG: Workspace Filesystem OUTSIDE Container before stashing"
-            test_printWorkspaceFilesystem()
             stashContent = [stashWorkspace(config, 'workspace')]
         }
         podTemplate(getOptions(config)) {
