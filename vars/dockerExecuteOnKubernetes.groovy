@@ -321,6 +321,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
                     echo "ContainerConfig: ${containerParams}"
                     container(containerParams) {
                         try {
+                            echo "[dockerExecuteOnKubernetes] utils.unstashAll ${stashContent}"
                             utils.unstashAll(stashContent)
                             echo "invalidate stash workspace-${config.uniqueId}"
                             stash name: "workspace-${config.uniqueId}", excludes: '**/*', allowEmpty: true
@@ -412,7 +413,7 @@ chown -R ${runAsUser}:${fsGroup} ."""
             echo "stash effective (excludes): ${excludes}"
         }
 
-        echo "dockerExecuteOnKubernetes.stashWorkspace ${prefix}-${config.uniqueId}"
+        echo "[dockerExecuteOnKubernetes] stashWorkspace ${prefix}-${config.uniqueId}"
         stash(
             name: stashName,
             includes: includes,
@@ -452,7 +453,7 @@ private Map getSecurityContext(Map config) {
 
 private void unstashWorkspace(config, prefix) {
     try {
-        echo "dockerExecuteOnKubernetes.unstashWorkspace ${prefix}-${config.uniqueId}"
+        echo "[dockerExecuteOnKubernetes] unstashWorkspace ${prefix}-${config.uniqueId}"
         unstash "${prefix}-${config.uniqueId}"
     } catch (AbortException | IOException e) {
         echo "${e.getMessage()}\n${e.getCause()}"
