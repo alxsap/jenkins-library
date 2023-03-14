@@ -419,7 +419,7 @@ chown -R ${runAsUser}:${fsGroup} ."""
             echo "stash effective (excludes): ${excludes}"
         }
 
-        echo "[dockerExecuteOnKubernetes] stashWorkspace ${prefix}-${config.uniqueId}"
+        echo "[dockerExecuteOnKubernetes] stashWorkspace - Stash content: ${stashName} (includes: ${includes}, excludes: ${excludes}, useDefaultExcludes: ${!config.stashNoDefaultExcludes})"
         stash(
             name: stashName,
             includes: includes,
