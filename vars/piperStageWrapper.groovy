@@ -42,7 +42,7 @@ void call(Map parameters = [:], body) {
             echo "sidecarImage configured for stage '${stageName}': '${config.sidecarImage}'"
             environment.add("SIDECAR_IMAGE=${config.sidecarImage}")
         }
-        if (Boolean.valueOf(env.ON_K8S) && (containerMap.size() > 0 || config.runStageInPod)) {
+        if (Boolean.valueOf(env.ON_K8S) && (containerMap.size() > 0 || true)) { //TODO - quick hack only //config.runStageInPod)) {
             environment.add("POD_NAME=${stageName}")
             withEnv(environment) {
                 dockerExecuteOnKubernetes(script: script, containerMap: containerMap, stageName: stageName) {
