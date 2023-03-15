@@ -45,7 +45,7 @@ void call(Map parameters = [:], body) {
         if (Boolean.valueOf(env.ON_K8S) && (containerMap.size() > 0 || config.runStageInPod)) { //TODO - quick hack only //config.runStageInPod)) {
             environment.add("POD_NAME=${stageName}")
             withEnv(environment) {
-                dockerExecuteOnKubernetes(script: script, containerMap: containerMap, stageName: stageName, dockerImage: 'jenkins/inbound-agent@sha256:62f48a12d41e02e557ee9f7e4ffa82c77925b817ec791c8da5f431213abc2828') {
+                dockerExecuteOnKubernetes(script: script, containerMap: containerMap, stageName: stageName) { //, dockerImage: 'jenkins/inbound-agent@sha256:62f48a12d41e02e557ee9f7e4ffa82c77925b817ec791c8da5f431213abc2828') {
                     executeStage(script, body, stageName, config, utils, parameters.telemetryDisabled)
                 }
             }
