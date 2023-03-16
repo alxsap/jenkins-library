@@ -309,6 +309,7 @@ private checkBuildTool(String buildTool, String buildDescriptorPattern) {
 
 private void initStashConfiguration (script, stashSettings, customStashSettings, verbose) {
     Map stashConfiguration = null
+    sh 'pwd; ls -la' //TODO remove
     if (customStashSettings){
         stashConfiguration = readYaml(file: customStashSettings)
     }else{
