@@ -54,6 +54,7 @@ def stashWithMessage(name, msg, include = '**/*.*', exclude = '', useDefaultExcl
 
 def stashStageFiles(Script script, String stageName) {
     List stashes = script.commonPipelineEnvironment.configuration.stageStashes?.get(stageName)?.stashes ?: []
+    echo "stashStageFiles [${stashes}]"
 
     stashList(script, stashes)
 
@@ -66,6 +67,7 @@ def stashStageFiles(Script script, String stageName) {
 
 def unstashStageFiles(Script script, String stageName, List stashContent = []) {
     stashContent += script.commonPipelineEnvironment.configuration.stageStashes?.get(stageName)?.unstash ?: []
+    echo "unstashStageFiles [${stashContent}]"
 
     script.deleteDir()
     unstashAll(stashContent)
