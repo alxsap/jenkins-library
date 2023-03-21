@@ -258,6 +258,8 @@ void call(Map parameters = [:]) {
             transportRequestReqIDFromGit(script: script)
         }
         pipelineStashFilesBeforeBuild script: script
+
+        echo "DEBUG - commonPipelineEnvironment: ${parameters.script.commonPipelineEnvironment.dump()}"
     }
 }
 
