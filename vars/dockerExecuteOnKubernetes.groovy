@@ -357,6 +357,7 @@ private void test_printWorkspaceFilesystem() {
     sh '''
       pwd
       ls -la
+      ls -la transfer/ || true
       ls -la .pipeline/ || true
       ls -la .pipeline/stepReports || true
       ls -la .pipeline/reports || true
