@@ -355,6 +355,7 @@ void executeOnPod(Map config, utils, Closure body, Script script, String debugSt
 
 private void test_printWorkspaceFilesystem(stageName, insideOutside, beforeAfter) {
     sh """
+      set +x
       pwd
       echo 'Start FileListing-${insideOutside}-${beforeAfter} (${stageName})'
       for filepath in * transfer/* .pipeline/* .pipeline/stepReports/* .pipeline/reports/*; do echo \${filepath}; done
