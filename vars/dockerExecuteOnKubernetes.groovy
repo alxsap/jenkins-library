@@ -263,7 +263,8 @@ void call(Map parameters = [:], body) {
             config.containerMap = [(config.get('dockerImage')): config.containerName]
             config.containerCommands = config.containerCommand ? [(config.get('dockerImage')): config.containerCommand] : null
         }
-        executeOnPod(config, utils, body, script)
+        String debugStageName = stageName
+        executeOnPod(config, utils, body, script, debugStageName) //TODO remove
     }
 }
 
@@ -291,7 +292,7 @@ def getOptions(config) {
     return options
 }
 
-void executeOnPod(Map config, utils, Closure body, Script script) {
+void executeOnPod(Map config, utils, Closure body, Script script, String debugStageName) {
     /*
      * There could be exceptions thrown by
         - The podTemplate
@@ -306,7 +307,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
         echo "[dockerExecuteOnKubernetes] executeOnPod config: ${config}"
         SidecarUtils sidecarUtils = new SidecarUtils(script)
         def stashContent = config.stashContent
-        echo "DEBUG: Workspace Filesystem OUTSIDE Container before creating it"
+        echo "DEBUG: [${debugStageName}] Workspace Filesystem OUTSIDE Container before creating it"
         test_printWorkspaceFilesystem()
         if (config.containerName && stashContent.isEmpty()) {
             stashContent = [stashWorkspace(config, 'workspace')]
@@ -329,12 +330,12 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
                             echo "invalidate stash workspace-${config.uniqueId}"
                             stash name: "workspace-${config.uniqueId}", excludes: '**/*', allowEmpty: true
 
-                            echo "DEBUG: Workspace Filesystem INSIDE Container after unstashing"
+                            echo "DEBUG: [${debugStageName}] Workspace Filesystem INSIDE Container after unstashing"
                             test_printWorkspaceFilesystem()
 
                             body()
                         } finally {
-                            echo "DEBUG: Workspace Filesystem INSIDE Container before stashing"
+                            echo "DEBUG: [${debugStageName}] Workspace Filesystem INSIDE Container before stashing"
                             test_printWorkspaceFilesystem()
                             stashWorkspace(config, 'container', true, true)
                         }
@@ -347,7 +348,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
     } finally {
         if (config.containerName)
             unstashWorkspace(config, 'container')
-            echo "DEBUG: Workspace Filesystem OUTSIDE Container after unstashing"
+            echo "DEBUG: [${debugStageName}] Workspace Filesystem OUTSIDE Container after unstashing"
             test_printWorkspaceFilesystem()
     }
 }
