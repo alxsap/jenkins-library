@@ -96,6 +96,18 @@ def unstash(name, msg = "Unstash failed:") {
                 msg = "[Retry JNLP4-connect issue] Unstashing failed:"
                 echo "$msg $name (${errRetry.getMessage()})"
             }
+        }else  if (e.getMessage().contains("Failed to extract")) { //e.g. Failed to extract deployDescriptor.tar.gz
+            sleep(3) // Wait 3 seconds in case it has been a network hiccup
+            try {
+                echo "[Retry Failed to extract issue] Unstashing content: ${name}"
+                steps.unstash name
+                unstashedContent += name
+            } catch (errRetry) {
+                msg = "[Retry Failed to extract issue] Unstashing failed:"
+                echo "$msg $name (${errRetry.getMessage()})"
+                steps.sh "whoami; pwd; ls -la"
+                throw errRetry //Fail in this case!
+            }
         }
     }
     return unstashedContent
