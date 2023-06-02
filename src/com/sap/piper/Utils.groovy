@@ -70,9 +70,7 @@ def unstashStageFiles(Script script, String stageName, List stashContent = []) {
     stashes += script.commonPipelineEnvironment.configuration.stageStashes?.get(stageName)?.unstash ?: []
 
     script.deleteDir()
-    unstashAll(stashes)
-
-    return stashes
+    return unstashAll(stashContent)
 }
 
 boolean isInsidePod(Script script) {
