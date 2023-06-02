@@ -307,7 +307,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
         def stashContent = config.stashContent
         boolean defaultStashCreated = false
         if (config.containerName && stashContent.isEmpty()) {
-            stashContent = [stashWorkspace(config, 'workspace')]
+            stashContent = [stashWorkspace(config, utils, 'workspace')]
             defaultStashCreated = true
         }
         podTemplate(getOptions(config)) {
@@ -329,7 +329,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
                             }
                             if (defaultStashCreated) {
                                 echo "invalidate stash workspace-${config.uniqueId}"
-                                stash name: "workspace-${config.uniqueId}", excludes: '**/*', allowEmpty: true
+                                utils.stash name: "workspace-${config.uniqueId}", excludes: '**/*', allowEmpty: true
                             }
                             def result = body()
                             if (config.verbose) {
@@ -337,7 +337,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
                             }
                             return result
                         } finally {
-                            stashWorkspace(config, 'container', true, true)
+                            stashWorkspace(config, utils, 'container', true, true)
                         }
                     }
                 } else {
@@ -387,7 +387,7 @@ private String generatePodSpec(Map config) {
     return new JsonUtils().groovyObjectToPrettyJsonString(podSpec)
 }
 
-private String stashWorkspace(config, prefix, boolean chown = false, boolean stashBack = false) {
+private String stashWorkspace(config, utils, prefix, boolean chown = false, boolean stashBack = false) {
     def stashName = "${prefix}-${config.uniqueId}"
     try {
         if (chown) {
@@ -418,7 +418,7 @@ chown -R ${runAsUser}:${fsGroup} ."""
             echo "stash effective (excludes): ${excludes}"
         }
 
-        stash(
+        utils.stash(
             name: stashName,
             includes: includes,
             excludes: excludes,
@@ -465,7 +465,7 @@ private void unstashWorkspace(config, utils, prefix) {
         throw e
     } finally {
         echo "invalidate stash ${prefix}-${config.uniqueId}"
-        stash name: "${prefix}-${config.uniqueId}", excludes: '**/*', allowEmpty: true
+        utils.stash name: "${prefix}-${config.uniqueId}", excludes: '**/*', allowEmpty: true
     }
 }
 
